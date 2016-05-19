@@ -1,4 +1,5 @@
 #ifndef SHTTPD_H 
+#define	SHTTPD_H
 #ifdef __cplusplus
 extern "C" {
 #endif

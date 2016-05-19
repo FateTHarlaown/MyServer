@@ -9,7 +9,7 @@ struct server_conf server_para={
 									54321,//Lsiten port
 									10000,//max client
 									5,//time out
-									2000,//init worker number
+									10,//init worker number
 									2048,//max worker number
 									};
 

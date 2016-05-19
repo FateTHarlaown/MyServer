@@ -1,5 +1,6 @@
 #include <netinet/in.h>
 #include <iostream>
+#include <errno.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -9,15 +10,17 @@
 #include "server.h"
 #include <unistd.h>
 #include <sys/epoll.h>
+#include "timer.h"
 #include <assert.h>
-
+#include <signal.h>
+#include "Glist.h" 
 #define METHOD_LEN 255
 #define PATH_LEN 255
 #define URL_LEN 255
 #define VERSION_LEN 50
 #define MAXEVENTS 255
 static int BACKLOG = 100000;
-
+static int pipefd[2];
 static server_conf server_config;
 static struct Gthread_pool pool;
 static int get_line(int sock, char *buf, int size);
@@ -30,18 +33,31 @@ static void cat(int client, FILE *resource);
 static void file_serve(int client_fd, char * filename);
 static void cannot_execute(int client);
 static void execute_cgi(int client, const char *path, const char *method, const char *query_string);
+static int setNoBlock(int fd);
+static void sig_alarm_handle(int sig);
+void sig_int_handle(int sig);
+void close_client(int client_fd);
+static list_head timer_list;
+
 /* *************************************************************
  *name:request_handle
  *para:void *(thread type, no use )
  *return:void *
- * */
-
+ ************************************************************ */
 void request_handle(struct Gthread_pool * pool)
 {
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGALRM, sig_alarm_handle);
+	signal(SIGINT, sig_int_handle);
+	alarm(2);
 	int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if(listen_fd == -1)
 	{
 		//error handle
+#if DEBUG == 1
+		printf("Create listen_fd failed!"); 
+		return ;
+#endif
 	}
 	struct sockaddr_in server_addr;
 	bzero(&server_addr, sizeof(server_addr));
@@ -58,7 +74,7 @@ void request_handle(struct Gthread_pool * pool)
 		BACKLOG = atoi(ptr);
 	}
 	else
-		printf("can not get listen queue from keinel\n");
+		//printf("can not get listen queue from keinel\n");
 	listen(listen_fd, BACKLOG);
 
 #if DEBUG == 1
@@ -67,15 +83,34 @@ void request_handle(struct Gthread_pool * pool)
 	
 	int epoll_fd = epoll_create(5);
 	assert(epoll_fd != -1);
-	add_event(epoll_fd, listen_fd, DATA_IN);
-	epoll_event events[MAXEVENTS];
-	while(1)
+	for(int i = 0; i < MAX_FD; i++)
 	{
-		int ret = epoll_wait(epoll_fd, events, MAXEVENTS, -1);
-		if(ret < 0)
+		timers[i] = NULL;
+	}
+
+	INIT_LIST_HEAD(&timer_list);
+#if DEBUG == 1
+	printf("&timer_list:%p\n", &timer_list);
+#endif
+	pthread_mutex_init(&timer_lock, NULL);
+	int r = socketpair(PF_UNIX, SOCK_STREAM, 0, pipefd);
+	assert(r != -1);
+	setNoBlock(pipefd[1]);
+	add_event(epoll_fd, listen_fd, DATA_IN);
+	add_event(epoll_fd, pipefd[0], DATA_IN);
+	epoll_event events[MAXEVENTS];
+	int overtime_ms = -1;
+	bool sys_tick = false;
+	bool run = true;
+
+	while(run == true)
+	{
+		int ret = epoll_wait(epoll_fd, events, MAXEVENTS, overtime_ms);
+		if(ret < 0 && errno != EINTR)
 		{
 #if DEBUG == 1
-			printf(" epoll wait failure\n");
+			printf(" epoll wait failure: %d\n", ret);
+			perror("OH epoll:");
 #endif
 			break;	
 		}
@@ -86,13 +121,78 @@ void request_handle(struct Gthread_pool * pool)
 			{
 				int client_fd = accept(listen_fd, NULL, 0);
 				add_event(epoll_fd, client_fd, DATA_IN);
+#if DEBUG == 1
+				printf("Now a new client is coming ! his fd: %d\n",client_fd);
+#endif
+				timer_type * new_timer = (timer_type*)malloc(sizeof(timer_type));
+				new_timer->over_time = LIFE_TIME + time(NULL);	
+				new_timer->fd = client_fd;
+				new_timer->callback_func = over_time_handle;
+				pthread_mutex_lock(&timer_lock);
+#if DEBUG == 1
+				printf("add a timer, fd:%d\n",client_fd);
+#endif
+				timer_add(new_timer, &timer_list);
+#if DEBUG == 1
+				printf("new timer next:%p\n",timer_list.next->next);
+				printf("new timer next:%p\n",timer_list.next->prev);
+				printf("timer_list:%p\n",&timer_list);
+#endif
+				pthread_mutex_unlock(&timer_lock);
+			}
+			else if((events[i].data.fd == pipefd[0]) && (events[i].events & EPOLLIN))// we get a signal
+			{
+#if DEBUG == 1
+				printf("Ready to accept some signals\n");
+#endif
+				char signals[1024];
+				ret = recv(pipefd[0], signals, sizeof(signals), 0);
+				if(ret == -1)
+				{
+					//
+				}
+				else if(ret == 0)
+				{
+					continue;
+				}
+				else
+				{
+					for(int i = 0; i < ret; i++)
+					{
+						switch(signals[i])
+						{
+							case SIGALRM:
+#if DEBUG == 1
+										printf("Now sys beating!\n");
+#endif
+										sys_tick = true;//now have only SIGALARM
+										 break;
+							case SIGINT:run = false;
+							default: 
+										 break;
+						}
+					}
+				}
 			}
 			else if(events[i].events & EPOLLIN)// a client send request
 			{
-					
+#if DEBUG == 1
+				printf("Now a new client start to comunicate!\n");
+#endif
 				/* add a client task to thread pool and delete the fd */
 				add_job(pool, client_service, new int(events[i].data.fd)); 
 				del_event(epoll_fd, events[i].data.fd, DATA_IN);
+			}
+			else if(events[i].events & EPOLLRDHUP)// a client close the fd
+			{
+#if DEBUG == 1
+				printf(" the client close the fd %d!\n", events[i].data.fd);
+#endif
+				close(events[i].data.fd);
+				del_event(epoll_fd, events[i].data.fd, DATA_IN);
+				pthread_mutex_lock(&timer_lock);
+				timer_del(timers[events[i].data.fd], &timer_list);
+				pthread_mutex_unlock(&timer_lock);
 			}
 			else
 			{
@@ -102,7 +202,43 @@ void request_handle(struct Gthread_pool * pool)
 #endif
 			}
 		}
-	}
+
+		if(sys_tick)//alarm happened check the timers
+		{
+#if DEBUG == 1
+			printf("Now handle the alarm signal\n");
+#endif
+#if DEBUG == 1
+			printf("timer_list:%p\n",&timer_list);
+#endif
+			pthread_mutex_lock(&timer_lock);
+			sys_tick_handle(&timer_list);
+			pthread_mutex_unlock(&timer_lock);
+			sys_tick = false;
+		}
+
+		if(!list_empty(&timer_list))
+		{
+#if DEBUG == 1
+			printf("Now update the overtime_ms for epoll\n");
+#endif
+			pthread_mutex_lock(&timer_lock);
+			if(!list_empty(&timer_list))
+			{
+				time_t cur = time(NULL);
+				list_head * pos = timer_list.next;
+				timer_type * entry = list_entry(pos, timer_type, node);
+				overtime_ms = (entry->over_time - cur) * 1000;
+			}
+			pthread_mutex_unlock(&timer_lock);
+		}
+		else
+		  overtime_ms = -1;
+			
+	    
+	}//while()
+	pthread_mutex_destroy(&timer_lock);
+	close(listen_fd);
 /*  
 	while(1) 
 	{ 
@@ -113,7 +249,8 @@ void request_handle(struct Gthread_pool * pool)
 		}
 	} 
 */
-} /* ************************************************************* 
+}
+/* ************************************************************* 
    *name:client_service 
    *para:void *(must to be convered to int * ),the data is malloced in heap, so it must be deleted in the end of the function 
    *return:void * */ 
@@ -169,7 +306,7 @@ void * client_service(void * arg)
 	{
 		//can not under stand the request
 		unimplemented(client_fd);
-		close(client_fd);
+		close_client(client_fd);
 		return NULL;
 	}
 
@@ -260,7 +397,7 @@ void doGetMethod(int client_fd, char * url, char * version)
 		printf("can not find the file\n");
 #endif
 		not_found(client_fd);
-		close(client_fd);
+		close_client(client_fd);
 		return;
 	}
 	else
@@ -275,7 +412,7 @@ void doGetMethod(int client_fd, char * url, char * version)
 		{
 			//CGI server
 			execute_cgi(client_fd, path, "GET", query_string); 				
-			close(client_fd);
+			close_client(client_fd);
 		}
 		else
 		{
@@ -285,7 +422,7 @@ void doGetMethod(int client_fd, char * url, char * version)
 #if DEBUG == 1
 		printf("We have send the file ,now to close fd\n");
 #endif
-			close(client_fd);
+			close_client(client_fd);
 		}
 	
 	}
@@ -547,4 +684,68 @@ void execute_cgi(int client, const char *path, const char *method, const char *q
   close(client);
   waitpid(pid, &status, 0);
  }
+}
+
+/* *********************************************************
+ * name:setNoBlock
+ * des:set a file scriptor no block
+ * para1:a fd
+ * return: the old option
+ * *********************************************************/
+int setNoBlock(int fd)
+{
+	int old_option = fcntl(fd, F_GETFL);
+	int new_option = old_option | O_NONBLOCK;
+	fcntl(fd, F_SETFL, new_option);
+	return fd;
+}
+
+/* *************************************************************
+ * name:sig_alarm_handle
+ * des:the alarm signal handler
+ * para1:sigal number
+ * return: void
+ * ************************************************************/
+void sig_alarm_handle(int sig)
+{
+	int save_errno = errno;
+	int msg = sig;
+	send(pipefd[1], (char*)&msg, 1, 0);
+	errno = save_errno;
+	alarm(2);
+}
+
+/* *************************************************************
+ * name:sig_int_handle
+ * des:the SIGINT signal handler
+ * para1:sigal number
+ * return: void
+ * ************************************************************/
+void sig_int_handle(int sig)
+{
+	int save_errno = errno;
+	int msg = sig;
+	send(pipefd[1], (char*)&msg, 1, 0);
+	errno = save_errno;
+}
+
+
+/* **********************************************************
+ * name:close_client
+ * des:close a client and delete it's timer
+ * para1: the fd of the client
+ * return:void
+ * **********************************************************/
+void close_client(int client_fd)
+{
+	if(timers[client_fd] != NULL)
+	{
+		pthread_mutex_lock(&timer_lock);
+		if(timers[client_fd] != NULL)
+		{
+			timer_del(timers[client_fd], &timer_list);
+			close(client_fd);
+		}
+		pthread_mutex_unlock(&timer_lock);
+	}
 }

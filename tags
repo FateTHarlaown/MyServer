@@ -1,0 +1,175 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BACKLOG	client_handle.cpp	/^static int BACKLOG = 100000;$/;"	v	file:
+BOOTING	pool.h	/^enum Gthread_pool_worker_state {BUSY, READY, BOOTING};$/;"	e	enum:Gthread_pool_worker_state
+BUSY	pool.h	/^enum Gthread_pool_worker_state {BUSY, READY, BOOTING};$/;"	e	enum:Gthread_pool_worker_state
+CC	Makefile	/^CC = g++ $/;"	m
+CFLAGS	Makefile	/^CFLAGS = -Wall$/;"	m
+CGIRoot	config.h	/^				char CGIRoot[128];$/;"	m	struct:server_conf
+ConfReadLine	parameters.c	/^ static int ConfReadLine(int fd, char * buffer, int len)$/;"	f	file:
+ConfigFile	config.h	/^				char ConfigFile[128];$/;"	m	struct:server_conf
+DATA_IN	config.h	34;"	d
+DATA_OUT	config.h	35;"	d
+DEBUG	config.h	24;"	d
+DefaultFile	config.h	/^				char DefaultFile[128];$/;"	m	struct:server_conf
+DisplayConf	parameters.c	/^int DisplayConf()$/;"	f
+DocumentRoot	config.h	/^				char DocumentRoot[128];$/;"	m	struct:server_conf
+FAILURE	config.h	31;"	d
+GetParaFromCmd	parameters.c	/^int GetParaFromCmd(int argc, char * argv[])$/;"	f
+GetParaFromFile	parameters.c	/^int GetParaFromFile(char * file)$/;"	f
+Gthread_pool	pool.h	/^struct Gthread_pool{$/;"	s
+Gthread_pool_flag	pool.h	/^enum Gthread_pool_flag {RUN, SHUTDOWN}; $/;"	g
+Gthread_pool_init	worker.c	/^int Gthread_pool_init(struct Gthread_pool * pool, int max_tasks, int max_workers, int min_workers)$/;"	f
+Gthread_pool_task	pool.h	/^struct Gthread_pool_task{$/;"	s
+Gthread_pool_worker	pool.h	/^struct Gthread_pool_worker{$/;"	s
+Gthread_pool_worker_routline_args	pool.h	/^struct Gthread_pool_worker_routline_args{$/;"	s
+Gthread_pool_worker_state	pool.h	/^enum Gthread_pool_worker_state {BUSY, READY, BOOTING};$/;"	g
+HTTP_POOL	pool.h	2;"	d
+INIT_LIST_HEAD	Glist.h	/^static inline void INIT_LIST_HEAD(struct list_head * name)$/;"	f
+IO_lock	pool.h	/^					pthread_mutex_t IO_lock;$/;"	m	struct:Gthread_pool
+InitWorkerNum	config.h	/^				int InitWorkerNum;$/;"	m	struct:server_conf
+LIBS	Makefile	/^LIBS = -lpthread $/;"	m
+LIFE_TIME	timer.h	11;"	d
+LINELEN	parameters.c	51;"	d	file:
+LIST_HEAD	Glist.h	29;"	d
+LIST_HEAD_INIT	Glist.h	27;"	d
+LODE_GATE	worker.c	/^static const float LODE_GATE = 0.2;$/;"	v	file:
+ListenPort	config.h	/^				int ListenPort;$/;"	m	struct:server_conf
+MAXEVENTS	client_handle.cpp	20;"	d	file:
+MAX_FD	timer.h	9;"	d
+METHOD_LEN	client_handle.cpp	16;"	d	file:
+MaxClient	config.h	/^				int MaxClient;$/;"	m	struct:server_conf
+MaxWoerkerNum	config.h	/^				int MaxWoerkerNum;$/;"	m	struct:server_conf
+OBJS	Makefile	/^OBJS = client_handle.o main.o parameters.o server.o worker.o demultiplex.o$/;"	m
+PATH_LEN	client_handle.cpp	17;"	d	file:
+READY	pool.h	/^enum Gthread_pool_worker_state {BUSY, READY, BOOTING};$/;"	e	enum:Gthread_pool_worker_state
+RM	Makefile	/^RM = rm -f $/;"	m
+RUN	pool.h	/^enum Gthread_pool_flag {RUN, SHUTDOWN}; $/;"	e	enum:Gthread_pool_flag
+SERVER_STRING	server.h	4;"	d
+SHTTPD_H	config.h	2;"	d
+SHUTDOWN	pool.h	/^enum Gthread_pool_flag {RUN, SHUTDOWN}; $/;"	e	enum:Gthread_pool_flag
+SLEEP_TIME	config.h	27;"	d
+SLOT_TIME	timer.h	12;"	d
+SUCCESS	config.h	30;"	d
+Schedule	doc/index.html	/^    function Schedule(e){e="string"==typeof e?[e]:e||[],this.ranges=[];var t,n=0,r=e.length,i,s,o=new Date,u=o.getFullYear()+"\/"+(o.getMonth()+1)+"\/"+o.getDate();for(;n<r;n++)t=e[n].replace(\/\\-\/g,"\/").split("~"),i=t[0],s=t[1]?t[1]:t[0],i.indexOf(":")===-1&&(i+=" 0:0:0"),s.indexOf(":")===-1&&(s+=" 0:0:0"),i.indexOf("\/")===-1&&(i=u+" "+i),s.indexOf("\/")===-1&&(s=u+" "+s),i=+this.parse(i),s=+this.parse(s),s<=i&&(s+=864e5),this.ranges[n]=[i,s]}Schedule.prototype={check:function(e){var t=this.ranges,n=0,r,i=t.length<=0,e=e?+this.parse(e):+(new Date);while(!i&&(r=t[n++]))i=e>=r[0]&&e<=r[1];return i},parse:function(e){var t=new RegExp("^\\\\d+(\\\\-|\\\\\/)\\\\d+(\\\\-|\\\\\/)\\\\d+$");if("string"==typeof e){if(t.test(e)||isNaN(Date.parse(e))){var n=e.split(\/ |T\/),r=n.length>1?n[1].split(\/[^\\d]\/):[0,0,0],i=n[0].split(\/[^\\d]\/);return new Date(i[0]-0,i[1]-1,i[2]-0,r[0]-0,r[1]-0,r[2]-0)}return new Date(e)}return e}}$/;"	f
+SearchSubmit	doc/index.html	/^            function SearchSubmit(){$/;"	f
+TARGET	Makefile	/^TARGET = raw_test $/;"	m
+TimeOut	config.h	/^				int TimeOut;$/;"	m	struct:server_conf
+URL_LEN	client_handle.cpp	18;"	d	file:
+VERSION_LEN	client_handle.cpp	19;"	d	file:
+_MY_TIMER	timer.h	2;"	d
+_SERVER	server.h	2;"	d
+__LIST_H	Glist.h	2;"	d
+__list_add	Glist.h	/^static inline void __list_add(struct list_head * new_node, struct list_head *prev, struct list_head *next)$/;"	f
+__list_del	Glist.h	/^static inline void __list_del(struct list_head *prev, struct list_head *next)$/;"	f
+__list_splice	Glist.h	/^static inline void __list_splice(struct list_head *list, struct list_head *head)$/;"	f
+addEvent	doc/index.html	/^	function addEvent(obj, eventType, func) {$/;"	f
+add_event	demultiplex.c	/^void add_event(int epoll_fd, int fd, int event_type)$/;"	f
+add_job	worker.c	/^int add_job(struct Gthread_pool * pool, void * (* job)(void * arg), void * arg)$/;"	f
+add_task	worker.c	/^int add_task(struct Gthread_pool_task * task, struct Gthread_pool * pool, void * (*proccess)(void * arg), void * arg)$/;"	f
+add_worker	worker.c	/^int add_worker(struct Gthread_pool_worker * new_worker, struct Gthread_pool * pool)$/;"	f
+arg	pool.h	/^						 void * arg;$/;"	m	struct:Gthread_pool_task
+attachEvent	doc/index.html	/^                           function attachEvent(obj, evt, func, eObj) {$/;"	f
+attachURL2Window	doc/index.html	/^	function attachURL2Window(id,url) {$/;"	f
+boot_cond	pool.h	/^							pthread_cond_t boot_cond;$/;"	m	struct:Gthread_pool_worker
+boot_lock	pool.h	/^							pthread_mutex_t boot_lock;$/;"	m	struct:Gthread_pool_worker
+callback_func	timer.h	/^	void (*callback_func)(void * arg);$/;"	m	struct:timer
+cannot_execute	client_handle.cpp	/^void cannot_execute(int client)$/;"	f
+cat	client_handle.cpp	/^void cat(int client, FILE *resource)$/;"	f
+client_service	client_handle.cpp	/^void * client_service(void * arg) $/;"	f
+close_pool	worker.c	/^int close_pool(struct Gthread_pool * pool)$/;"	f
+del_event	demultiplex.c	/^void del_event(int epoll_fd, int fd, int event_type)$/;"	f
+del_worker	worker.c	/^int del_worker(struct Gthread_pool_worker * worker_to_del, struct Gthread_pool * pool)$/;"	f
+delay	worker.c	/^static struct timeval delay = {0, SLEEP_TIME}; $/;"	v	typeref:struct:timeval	file:
+distribute_task	worker.c	/^void * distribute_task(void * arg)$/;"	f
+doGetMethod	client_handle.cpp	/^void doGetMethod(int client_fd, char * url, char * version)$/;"	f
+execute_cgi	client_handle.cpp	/^void execute_cgi(int client, const char *path, const char *method, const char *query_string)$/;"	f
+fd	timer.h	/^	int fd;$/;"	m	struct:timer
+file_serve	client_handle.cpp	/^void file_serve(int client_fd, char * filename)$/;"	f
+flag	pool.h	/^					enum Gthread_pool_flag flag;\/\/the state of the Gthread pool$/;"	m	struct:Gthread_pool	typeref:enum:Gthread_pool::Gthread_pool_flag
+formSubmit	doc/index.html	/^            function formSubmit(form,isWb,key){$/;"	f
+getRandom	doc/index.html	/^                           function getRandom(obj) {$/;"	f
+get_line	client_handle.cpp	/^int get_line(int sock, char *buf, int size)$/;"	f
+get_pool_usage	worker.c	/^float get_pool_usage(struct Gthread_pool * pool)$/;"	f
+get_worker_by_id	worker.c	/^struct Gthread_pool_worker * get_worker_by_id(pthread_t id, struct Gthread_pool * pool)$/;"	f
+headers	client_handle.cpp	/^void headers(int client)$/;"	f
+id	pool.h	/^							pthread_t id;$/;"	m	struct:Gthread_pool_worker
+info_lock	pool.h	/^					pthread_mutex_t info_lock;$/;"	m	struct:Gthread_pool
+jump0	doc/index.html	/^<a name="jump0"><\/a>$/;"	a
+link_node	pool.h	/^							struct list_head link_node;$/;"	m	struct:Gthread_pool_worker	typeref:struct:Gthread_pool_worker::list_head
+link_node	pool.h	/^						 struct list_head link_node;$/;"	m	struct:Gthread_pool_task	typeref:struct:Gthread_pool_task::list_head
+list_add	Glist.h	/^static inline void list_add(struct list_head * new_node, struct list_head *head)$/;"	f
+list_add_tail	Glist.h	/^static inline void list_add_tail(struct list_head *new_node, struct list_head *head)$/;"	f
+list_del	Glist.h	/^static inline void list_del(struct list_head *entry)$/;"	f
+list_del_init	Glist.h	/^static inline void list_del_init(struct list_head *entry)$/;"	f
+list_empty	Glist.h	/^static inline int list_empty(struct list_head *head)$/;"	f
+list_entry	Glist.h	193;"	d
+list_for_each	Glist.h	201;"	d
+list_for_each_entry	Glist.h	229;"	d
+list_for_each_entry_safe	Glist.h	241;"	d
+list_for_each_prev	Glist.h	209;"	d
+list_for_each_safe	Glist.h	219;"	d
+list_head	Glist.h	/^struct list_head {$/;"	s
+list_move	Glist.h	/^static inline void list_move(struct list_head *list, struct list_head *head)$/;"	f
+list_move_tail	Glist.h	/^static inline void list_move_tail(struct list_head *list,$/;"	f
+list_splice	Glist.h	/^static inline void list_splice(struct list_head *list, struct list_head *head)$/;"	f
+list_splice_init	Glist.h	/^static inline void list_splice_init(struct list_head *list,$/;"	f
+long_cmd_opt	parameters.c	/^static struct option long_cmd_opt[]={$/;"	v	typeref:struct:option	file:
+main	main.cpp	/^int main(int argc, char * argv[])$/;"	f
+manage_worker	pool.h	/^					pthread_t manage_worker;$/;"	m	struct:Gthread_pool
+max_tasks	pool.h	/^					int max_tasks;$/;"	m	struct:Gthread_pool
+max_workers	pool.h	/^					int max_workers;$/;"	m	struct:Gthread_pool
+min_workers	pool.h	/^					int min_workers;$/;"	m	struct:Gthread_pool
+mutex_data	pool.h	/^					struct mutex_pool_data mutex_data;$/;"	m	struct:Gthread_pool	typeref:struct:Gthread_pool::mutex_pool_data
+mutex_pool_data	pool.h	/^struct mutex_pool_data{$/;"	s
+next	Glist.h	/^	struct list_head *next, *prev;$/;"	m	struct:list_head	typeref:struct:list_head::list_head
+node	timer.h	/^	list_head node;	$/;"	m	struct:timer
+not_found	client_handle.cpp	/^void not_found(int client)$/;"	f
+over_time	timer.h	/^	time_t over_time;$/;"	m	struct:timer
+over_time_handle	timer.cpp	/^void over_time_handle(void * arg_fd)$/;"	f
+pipefd	client_handle.cpp	/^static int pipefd[2];$/;"	v	file:
+pool	client_handle.cpp	/^static struct Gthread_pool pool;$/;"	v	typeref:struct:Gthread_pool	file:
+pool	pool.h	/^										 struct Gthread_pool * pool;$/;"	m	struct:Gthread_pool_worker_routline_args	typeref:struct:Gthread_pool_worker_routline_args::Gthread_pool
+prev	Glist.h	/^	struct list_head *next, *prev;$/;"	m	struct:list_head	typeref:struct:list_head::
+proccess	pool.h	/^						 void * (*proccess)(void * arg); $/;"	m	struct:Gthread_pool_task
+request_handle	client_handle.cpp	/^void request_handle(struct Gthread_pool * pool)$/;"	f
+routline_args	pool.h	/^							struct Gthread_pool_worker_routline_args routline_args;$/;"	m	struct:Gthread_pool_worker	typeref:struct:Gthread_pool_worker::Gthread_pool_worker_routline_args
+search_idle_worker	worker.c	/^struct Gthread_pool_worker * search_idle_worker(struct Gthread_pool * pool)$/;"	f
+server_close	server.cpp	/^bool server_close(struct Gthread_pool * pool)$/;"	f
+server_conf	config.h	/^struct server_conf{$/;"	s
+server_config	client_handle.cpp	/^static server_conf server_config;$/;"	v	file:
+server_init	server.cpp	/^bool server_init(struct Gthread_pool * pool)$/;"	f
+server_para	parameters.c	/^struct server_conf server_para={$/;"	v	typeref:struct:server_conf
+setNoBlock	client_handle.cpp	/^int setNoBlock(int fd)$/;"	f
+short_cmd_opt	parameters.c	/^static char * short_cmd_opt = "c:d:f:o:l:m:t:i:w:h";$/;"	v	file:
+sig_alarm_handle	client_handle.cpp	/^void sig_alarm_handle(int sig)$/;"	f
+sig_usr1_handler	worker.c	/^void sig_usr1_handler(int signum)$/;"	f
+state	pool.h	/^							enum Gthread_pool_worker_state state;$/;"	m	struct:Gthread_pool_worker	typeref:enum:Gthread_pool_worker::Gthread_pool_worker_state
+surplus_task_num	pool.h	/^					sem_t surplus_task_num;\/\/the sem > 0, means there are some tasks to be processed$/;"	m	struct:Gthread_pool
+sys_tick_handle	timer.cpp	/^void sys_tick_handle(struct list_head *  head)$/;"	f
+tSearchUatrack	doc/index.html	/^            function tSearchUatrack(val) {$/;"	f
+task_distribute_worker	pool.h	/^					pthread_t task_distribute_worker;$/;"	m	struct:Gthread_pool
+task_list	pool.h	/^					struct list_head task_list;$/;"	m	struct:Gthread_pool	typeref:struct:Gthread_pool::list_head
+task_num	pool.h	/^						int task_num;$/;"	m	struct:mutex_pool_data
+this_worker	pool.h	/^										 struct Gthread_pool_worker * this_worker;$/;"	m	struct:Gthread_pool_worker_routline_args	typeref:struct:Gthread_pool_worker_routline_args::Gthread_pool_worker
+timer	timer.h	/^typedef struct timer{$/;"	s
+timer_add	timer.cpp	/^void timer_add(timer_type * new_timer, struct list_head * head)$/;"	f
+timer_cmp	timer.cpp	/^bool timer_cmp(timer_type * a, timer_type * b)$/;"	f
+timer_del	timer.cpp	/^void timer_del(timer_type * timer_del, struct list_head * head)$/;"	f
+timer_list	client_handle.cpp	/^static list_head timer_list;$/;"	v	file:
+timer_lock	timer.cpp	/^pthread_mutex_t timer_lock;$/;"	v
+timer_type	timer.h	/^} timer_type;$/;"	t	typeref:struct:timer
+timers	timer.cpp	/^timer_type * timers[MAX_FD];$/;"	v
+unimplemented	client_handle.cpp	/^void unimplemented(int client)$/;"	f
+worker_cond	pool.h	/^							pthread_cond_t worker_cond;$/;"	m	struct:Gthread_pool_worker
+worker_lock	pool.h	/^							pthread_mutex_t worker_lock;$/;"	m	struct:Gthread_pool_worker
+worker_manage	worker.c	/^void * worker_manage(void * arg)$/;"	f
+worker_num	pool.h	/^						int worker_num;$/;"	m	struct:mutex_pool_data
+worker_routline	worker.c	/^void * worker_routline(void * arg)$/;"	f
+worker_task	pool.h	/^							void * (*worker_task)(void * );$/;"	m	struct:Gthread_pool_worker
+worker_task_arg	pool.h	/^							void * worker_task_arg;$/;"	m	struct:Gthread_pool_worker
+workers	pool.h	/^					struct list_head workers;$/;"	m	struct:Gthread_pool	typeref:struct:Gthread_pool::list_head

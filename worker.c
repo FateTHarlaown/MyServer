@@ -7,9 +7,9 @@ static void * distribute_task(void * arg);
 static struct Gthread_pool_worker * search_idle_worker(struct Gthread_pool * pool);
 static int add_worker(struct Gthread_pool_worker * new_worker, struct Gthread_pool * pool);
 static int add_task(struct Gthread_pool_task * task, struct Gthread_pool * pool, void * (*proccess)(void * arg), void * arg);
-static struct Gthread_pool_worker * get_worker_by_id(pthread_t id, struct Gthread_pool * pool);
+//static struct Gthread_pool_worker * get_worker_by_id(pthread_t id, struct Gthread_pool * pool);
 static void sig_usr1_handler(int signum);
-static float workers_usage();
+float get_pool_usage(struct Gthread_pool * pool);
 static int del_worker(struct Gthread_pool_worker * worker_to_del, struct Gthread_pool * pool);
 
 static struct timeval delay = {0, SLEEP_TIME}; 
@@ -333,6 +333,7 @@ void * worker_routline(void * arg)
  * para2:a pointer point to Gthread pool
  * return: a pointer point to the worker has this id, if can not find, return NULL
  * *****************************************************************************/
+/*  
 struct Gthread_pool_worker * get_worker_by_id(pthread_t id, struct Gthread_pool * pool)
 {
 	assert(pool);
@@ -353,8 +354,7 @@ struct Gthread_pool_worker * get_worker_by_id(pthread_t id, struct Gthread_pool 
 	pthread_mutex_unlock(&(pool->info_lock));
 	return NULL;
 }
-
-
+*/
 
 /*************************************************************************************
  * name: get_pool_usage
