@@ -1,5 +1,5 @@
 CC = g++ 
-CFLAGS = -Wall -g
+CFLAGS = -Wall 
 LIBS = -lpthread 
 TARGET = raw_test 
 RM = rm -f 

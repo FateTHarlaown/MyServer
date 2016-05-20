@@ -142,11 +142,9 @@ void request_handle(struct Gthread_pool * pool)
 			}
 			else if((events[i].data.fd == pipefd[0]) && (events[i].events & EPOLLIN))// we get a signal
 			{
-/*
 #if DEBUG == 1
 				printf("Ready to accept some signals\n");
 #endif
-*/
 				char signals[1024];
 				ret = recv(pipefd[0], signals, sizeof(signals), 0);
 				if(ret == -1)
@@ -164,11 +162,9 @@ void request_handle(struct Gthread_pool * pool)
 						switch(signals[i])
 						{
 							case SIGALRM:
-/*  
 #if DEBUG == 1
 										printf("Now sys beating!\n");
 #endif
-*/
 										sys_tick = true;//now have only SIGALARM
 										 break;
 							case SIGINT:run = false;
@@ -209,15 +205,12 @@ void request_handle(struct Gthread_pool * pool)
 
 		if(sys_tick)//alarm happened check the timers
 		{
-/*
 #if DEBUG == 1
 			printf("Now handle the alarm signal\n");
 #endif
-
 #if DEBUG == 1
 			printf("timer_list:%p\n",&timer_list);
 #endif
-*/
 			pthread_mutex_lock(&timer_lock);
 			sys_tick_handle(&timer_list);
 			pthread_mutex_unlock(&timer_lock);
@@ -226,11 +219,9 @@ void request_handle(struct Gthread_pool * pool)
 
 		if(!list_empty(&timer_list))
 		{
-/*  
 #if DEBUG == 1
 			printf("Now update the overtime_ms for epoll\n");
 #endif
-*/
 			pthread_mutex_lock(&timer_lock);
 			if(!list_empty(&timer_list))
 			{
