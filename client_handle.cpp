@@ -645,7 +645,7 @@ void execute_cgi(int client, const char *path, const char *method, const char *q
   return;
  }
 
- if ( (pid = fork()) < 0 ) {
+ if ( (pid = vfork()) < 0 ) {
   cannot_execute(client);
   return;
  }
